@@ -34,7 +34,7 @@ mongoose.connect(mongoURI, {
 db.on("error", (err) =>
   console.log(`Yo, MongoDB buggin' out...`, +err.message)
 );
-db.on("open", () => console.log(`MongoDB on lock.`, `URI:`, mongoURI));
+db.on("open", () => console.log(`MongoDB's on lock.`));
 // VIEW .env URI
 // db.on("open", () => console.log(`MongoDB on lock.`, `URI:`, mongoURI));
 db.on("close", () => console.log("Bye, bye, MongoDB!"));
@@ -67,13 +67,23 @@ app.use(methodOverride("_method"));
 
 // ROUTES //
 ///////////?
-app.get("/", (req, res) => {
-  res.send(`<h3>Captain's Log: let's get it!</h3><p>Warp One: Engage!</p>`);
+app.get("/logs", async (req, res) => {
+  try {
+    const foundLogs = await Log.find({});
+    console.log(foundLogs);
+    res.status(200).render("Index", {
+      logs: foundLogs,
+    });
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 // A(*). CatchAll
+// TODO: Change after creating /logs Index route
+// /logs
 app.get("*", (req, res) => {
-  res.redirect("/logs");
+  res.redirect("/");
 });
 
 // SERVER: -P 3000
@@ -82,15 +92,21 @@ app.listen(PORT, function () {
 });
 
 /* 
+GITHUB REPO
+https://github.com/andrewdoak/captains-log
+
+ASSIGNMENT PAGE
+https://ps-rtt-sei.herokuapp.com/15-week/mod-3/week-13/day-2/hw/
+
 RESTFUL ROUTES
 INDUCES for the order in your app
 ACTION              URL                 HTTP VERB	    JSX VIEW	        MONGOOSE METHOD
 I(1). Index	        /logs               GET	            Index.jsx	        Log.find()
-N(2). New	        /logs/new           GET	            New.jsx	            NONE
-D(3). Delete	  	/logs/:id           DELETE                              findByIdAndDelete()                        
-U(4). Update	    /logs/:id           PUT                 	     	    findByIdAndUpdate()
-C(5). Create (?)	/logs               POST                        	    create()
-E(6). Edit	        /logs/:id/edit      GET             Edit.jsx            findById() 	                    
+N(2). New	          /logs/new           GET	            New.jsx	          NONE
+D(3). Delete	  	  /logs/:id           DELETE                            findByIdAndDelete()                        
+U(4). Update	      /logs/:id           PUT                 	     	      findByIdAndUpdate()
+C(5). Create (?)	  /logs               POST                        	    create()
+E(6). Edit	        /logs/:id/edit      GET             Edit.jsx          findById() 	                    
 S(7). Show	        /logs/:id           GET             Show.jsx        	findById()                    
 
 A(*). CatchAll      /logs               GET             Index.jsx
