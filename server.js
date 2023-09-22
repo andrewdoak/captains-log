@@ -66,7 +66,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(methodOverride("_method"));
 
 // ROUTES //
-///////////?
+///////////
+// 1. Index
 app.get("/logs", async (req, res) => {
   try {
     const foundLogs = await Log.find({});
@@ -74,6 +75,21 @@ app.get("/logs", async (req, res) => {
     res.status(200).render("Index", {
       logs: foundLogs,
     });
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
+// 2. New
+app.get("/logs/new", (req, res) => {
+  res.render("New");
+});
+
+// 3. Delete
+app.delete("/logs/:id", async (req, res) => {
+  try {
+    await Log.findByIdAndDelete(req.params.id);
+    res.status(200).redirect("/logs");
   } catch (err) {
     res.status(400).send(err);
   }
@@ -97,6 +113,9 @@ https://github.com/andrewdoak/captains-log
 
 ASSIGNMENT PAGE
 https://ps-rtt-sei.herokuapp.com/15-week/mod-3/week-13/day-2/hw/
+
+CANVAS
+https://perscholas.instructure.com/courses/1514/assignments/297831
 
 RESTFUL ROUTES
 INDUCES for the order in your app
